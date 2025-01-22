@@ -1,19 +1,20 @@
-"use client";
+"use client"; // Client-side rendering
 
 import { useSearchParams } from "next/navigation";
-import { useRef } from "react";
+import { useState, useEffect, useRef } from "react";
 import { toJpeg } from "html-to-image";
 import { saveAs } from "file-saver";
+import { Suspense } from "react";
 
-export default function ResumePage() {
+const Resume = () => {
   const searchParams = useSearchParams();
-  const name = searchParams.get("name");
-  const qualification1 = searchParams.get("qualification1");
-  const qualification2 = searchParams.get("qualification2");
-  const experience1 = searchParams.get("experience1");
-  const experience2 = searchParams.get("experience2");
-  const skills = searchParams.get("skills");
-  const about = searchParams.get("about");
+  const name = searchParams.get("name") || "Default Name"; // Added fallback
+  const qualification1 = searchParams.get("qualification1") || "N/A";
+  const qualification2 = searchParams.get("qualification2") || "N/A";
+  const experience1 = searchParams.get("experience1") || "No experience";
+  const experience2 = searchParams.get("experience2") || "No experience";
+  const skills = searchParams.get("skills") || "No skills listed";
+  const about = searchParams.get("about") || "No description provided";
 
   const resumeRef = useRef(null);
 
@@ -39,7 +40,13 @@ export default function ResumePage() {
   };
 
   return (
-    <>
+    <div
+      style={{
+        display: "flex",
+        justifyContent: "center",
+        flexDirection: "column",
+      }}
+    >
       <div
         ref={resumeRef}
         style={{
@@ -47,8 +54,8 @@ export default function ResumePage() {
           fontFamily: "Georgia, serif",
           backgroundColor: "#eef2f3",
           padding: "20px",
-          display:"flex",
-          justifyContent: "center"
+          display: "flex",
+          justifyContent: "center",
         }}
       >
         <div
@@ -175,26 +182,41 @@ export default function ResumePage() {
           </p>
         </div>
       </div>
-      <div style={{display:"flex", justifyContent:"center", alignItems:"center"}}><button
-        onClick={handleDownload}
+      <div
         style={{
-          width:"30%",
-          marginTop: "25px",
-          padding: "12px 25px",
-          fontSize: "18px",
-          color: "#fff",
-          backgroundColor: "#2980b9",
-          border: "none",
-          borderRadius: "6px",
-          cursor: "pointer",
-          boxShadow: "0 4px 6px rgba(0, 0, 0, 0.15)",
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
         }}
-        onMouseOver={(e) => (e.target.style.backgroundColor = "#1a5276")}
-        onMouseOut={(e) => (e.target.style.backgroundColor = "#2980b9")}
       >
-        Download as JPG
-      </button>
+        <button
+          onClick={handleDownload}
+          style={{
+            width: "30%",
+            marginTop: "25px",
+            padding: "12px 25px",
+            fontSize: "18px",
+            color: "#fff",
+            backgroundColor: "#2980b9",
+            border: "none",
+            borderRadius: "6px",
+            cursor: "pointer",
+            boxShadow: "0 4px 6px rgba(0, 0, 0, 0.15)",
+          }}
+          onMouseOver={(e) => (e.target.style.backgroundColor = "#1a5276")}
+          onMouseOut={(e) => (e.target.style.backgroundColor = "#2980b9")}
+        >
+          Download as JPG
+        </button>
       </div>
-    </>
+    </div>
+  );
+};
+
+export default function ResumePage() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <Resume />
+    </Suspense>
   );
 }
